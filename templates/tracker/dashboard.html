@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4"><div><h1 class="h3 mb-1">Application Dashboard</h1><p class="text-muted mb-0">Organize your job search in one place.</p></div><a class="btn btn-primary" href="{% url 'add_application' %}">+ Add Application</a></div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg"><div class="card border-0 shadow-sm p-3 h-100"><span class="text-muted">Total</span><h2 class="mb-0">{{ total }}</h2></div></div>
+  <div class="col-6 col-lg"><div class="card border-0 shadow-sm p-3 h-100"><span class="text-muted">Applied</span><h2 class="mb-0">{{ applied }}</h2></div></div>
+  <div class="col-6 col-lg"><div class="card border-0 shadow-sm p-3 h-100"><span class="text-muted">Interviews</span><h2 class="mb-0">{{ interviews }}</h2></div></div>
+  <div class="col-6 col-lg"><div class="card border-0 shadow-sm p-3 h-100"><span class="text-muted">Offers</span><h2 class="mb-0">{{ offers }}</h2></div></div>
+  <div class="col-6 col-lg"><div class="card border-0 shadow-sm p-3 h-100"><span class="text-muted">Rejected</span><h2 class="mb-0">{{ rejected }}</h2></div></div>
+</div>
+<div class="card border-0 shadow-sm mb-4"><div class="card-body"><div class="d-flex justify-content-between"><h2 class="h5">Applications by status</h2><span class="text-muted small">All your applications</span></div><div class="mx-auto" style="max-width:460px"><canvas id="statusChart" aria-label="Applications by status" role="img"></canvas></div><p id="emptyChart" class="text-center text-muted mt-3" hidden>Add an application to see a chart.</p></div></div>
+<form class="row g-2 mb-3" method="get"><div class="col-md-6"><input class="form-control" name="q" value="{{ query }}" placeholder="Search company or role" aria-label="Search by company or role"></div><div class="col-md-4"><select class="form-select" name="status" aria-label="Filter by status"><option value="">All statuses</option>{% for value,label in statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div><div class="col-md-2"><button class="btn btn-dark w-100">Filter</button></div></form>
+<div class="table-responsive bg-white rounded shadow-sm"><table class="table table-striped align-middle mb-0"><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead><tbody>
+{% for app in applications %}<tr><td>{{ app.company }}</td><td>{{ app.role }}</td><td><span class="badge text-bg-secondary">{{ app.get_status_display }}</span></td><td>{{ app.applied_date }}</td><td><a class="btn btn-sm btn-outline-primary" href="{% url 'edit_application' app.pk %}">Edit</a> <form class="d-inline" method="post" action="{% url 'delete_application' app.pk %}" onsubmit="return confirm('Delete this application?')">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% empty %}<tr><td colspan="5" class="text-center p-4">No applications found. Add your first one!</td></tr>{% endfor %}</tbody></table></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script>
+const counts = [{{ applied }}, {{ interviews }}, {{ offers }}, {{ rejected }}];
+if (counts.some(value => value > 0) && window.Chart) {
+  new Chart(document.getElementById('statusChart'), {type:'doughnut',data:{labels:['Applied','Interview','Offer','Rejected'],datasets:[{data:counts,backgroundColor:['#64748b','#2563eb','#16a34a','#dc2626']}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+} else {document.getElementById('statusChart').hidden=true;document.getElementById('emptyChart').hidden=false;}
+</script>
+{% endblock %}
