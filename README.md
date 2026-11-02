@@ -68,27 +68,6 @@ Example response for `GET /api/applications/stats/`:
 {"total": 4, "applied": 2, "interviews": 1, "offers": 1, "rejected": 0}
 ```
 
-## Why user data stays private
-
-`JobApplication` links to Django's User using `ForeignKey`. Both HTML and API queries always filter by `request.user`. An attempt to read/edit another user's ID returns 404. Authentication is required for all application endpoints. HTML POST forms and session-based API writes use CSRF checks.
-
-## Production/deployment checklist
-
-1. Use a managed PostgreSQL database and set the `DB_*` variables.
-2. Create a unique Django secret, set `DJANGO_DEBUG=False` and `DJANGO_ALLOWED_HOSTS=your-domain.example`.
-3. For an HTTPS frontend or host, set `CSRF_TRUSTED_ORIGINS=https://your-domain.example`. Set `TRUST_PROXY_SSL=True` **only behind a trusted HTTPS proxy** that sets `X-Forwarded-Proto` correctly.
-4. Run `python manage.py migrate` and `python manage.py collectstatic --noinput`.
-5. Run via a WSGI server such as `gunicorn config.wsgi:application` on Linux hosting; HTTPS termination must be configured on the hosting platform.
-6. Run `python manage.py check --deploy` and address all security warnings; configure secure host/HTTPS redirects on your platform.
-7. Do not commit `.env` or actual applicant information to GitHub. Chart.js and Bootstrap load from external CDNs and need an internet connection.
-
-**Note:** The project is built for learning and portfolio demonstrations. No live deployment is included; test in your environment before claiming it is production-ready.
-
-## What to say in an interview
-
-> I created JobTrack using Python, Django and PostgreSQL. Users can track applications using forms or REST endpoints. I used Django ORM for queries and linked every application to its user, so users can access only their own data. I added filtering, a status dashboard and automated tests for permission checks.
-
-Be ready to explain: models vs serializers, GET/POST/PATCH/DELETE, session authentication and CSRF, PostgreSQL relationships, queryset filtering, API pagination and why ownership checks matter.
 
 ## Resume bullet example (only after running and testing)
 
