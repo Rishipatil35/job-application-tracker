@@ -1,74 +1,171 @@
-# JobTrack — Job Application Tracking System
+﻿# JobTrack ΓÇö Job Application Tracking System
 
-A resume-friendly **Python Django backend project** with a Bootstrap dashboard and REST API. Build it, run it, read the code and practice explaining your decisions before adding it to your resume.
+## Overview
+
+JobTrack is a web-based application developed using Python, Django, and PostgreSQL to help students and job seekers organize and manage their job applications.
+
+The system allows users to track applications submitted to different companies, update their application status, and monitor their job search progress through an interactive dashboard.
+
+The application also provides REST APIs for managing job applications and uses Django's authentication system to secure user data.
+
+## Technologies Used
+
+- **Backend:** Python, Django, Django REST Framework
+- **Database:** PostgreSQL
+- **Frontend:** HTML, CSS, Bootstrap, JavaScript
+- **Data Visualization:** Chart.js
+- **Version Control:** Git, GitHub
+- **Authentication:** Django Session Authentication
 
 ## Features
-- Register, login, logout using Django's built-in authentication
-- Create, view, edit, and delete only **your own** job applications
-- Search company/role and filter by status
-- Dashboard totals and a status chart (Chart.js via CDN)
-- REST API with Django REST Framework, session authentication and pagination
-- Tests for authentication, API CRUD, isolation, filtering and statistics
-- PostgreSQL by default, optional SQLite for a quick local trial
 
-## Folder overview
-- `tracker/models.py` — database table structure
-- `tracker/views.py` — HTML pages and dashboard numbers
-- `tracker/forms.py` — validated HTML forms
-- `tracker/api.py` — JSON API routes, filtering and user isolation
-- `tracker/serializers.py` — API input/output fields and validation
-- `tracker/tests.py`, `tracker/tests_api.py` — automated tests
-- `templates/` — Bootstrap pages
-- `config/` — Django configuration and routes
+- User registration, login, and logout
+- Create, view, update, and delete job applications
+- Track application status
+- Search applications by company name or job role
+- Filter applications by status
+- Dashboard with application statistics and charts
+- REST APIs for application management
+- User-specific data access and authentication
+- Automated tests for application functionality and API permissions
 
-## Run on Windows (PowerShell in VS Code)
+## Project Structure
 
-Install Python 3.10+ and PostgreSQL (if using the default database). Create a PostgreSQL database called `jobtracker` in pgAdmin or `psql`.
+```text
+job_application_tracker/
+Γöé
+Γö£ΓöÇΓöÇ config/                 # Django project configuration
+Γö£ΓöÇΓöÇ tracker/                # Application models, views and APIs
+Γö£ΓöÇΓöÇ templates/              # HTML templates
+Γö£ΓöÇΓöÇ manage.py               # Django management script
+Γö£ΓöÇΓöÇ requirements.txt        # Python dependencies
+Γö£ΓöÇΓöÇ .env.example            # Environment variable template
+ΓööΓöÇΓöÇ README.md               # Project documentation
+```
+
+## Installation and Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/rishipatil35/job-application-tracker.git
+cd job-application-tracker
+```
+
+### 2. Create a Virtual Environment
 
 ```powershell
 py -m venv .venv
+```
+
+### 3. Install Dependencies
+
+```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### 4. Configure PostgreSQL
+
+Create a PostgreSQL database named `jobtracker`.
+
+Copy the environment configuration:
+
+```powershell
 Copy-Item .env.example .env
 ```
 
-Edit `.env`: set a long random `DJANGO_SECRET_KEY`, configure your PostgreSQL user/password. For a trial without PostgreSQL, set `USE_SQLITE=True` in `.env` (SQLite is only an optional local convenience; the portfolio stack uses PostgreSQL).
+Update your `.env` file:
+
+```env
+DJANGO_SECRET_KEY=your-generated-secret-key
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+
+DB_NAME=jobtracker
+DB_USER=postgres
+DB_PASSWORD=your_postgresql_password
+DB_HOST=localhost
+DB_PORT=5432
+
+USE_SQLITE=False
+```
+
+Replace the example secret key and password with your own values. Do not commit the `.env` file to GitHub.
+
+### 5. Apply Database Migrations
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py migrate
+```
+
+### 6. Run the Application
+
+```powershell
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
-Open **http://127.0.0.1:8000/register/** and create an account. Dashboard is `/`; API endpoints are listed below.
+Open the application:
 
-### Test
+http://127.0.0.1:8000/
+
+Register a new account to start managing job applications.
+
+## REST API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/applications/` | Retrieve applications |
+| POST | `/api/applications/` | Create an application |
+| GET | `/api/applications/{id}/` | Retrieve application details |
+| PATCH | `/api/applications/{id}/` | Update an application |
+| DELETE | `/api/applications/{id}/` | Delete an application |
+| GET | `/api/applications/?q=python&status=applied` | Search and filter |
+| GET | `/api/applications/stats/` | Retrieve application statistics |
+
+The APIs use Django session authentication. Users can access and modify only their own application records.
+
+## Testing
+
+Run the automated tests using:
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py test
 ```
 
-If using PostgreSQL, the test runner typically needs permission to create a test database. For a quick SQLite test, set `USE_SQLITE=True` in `.env`.
+The test suite covers authentication, CRUD operations, API access permissions, data isolation, filtering, and statistics.
 
-## API routes (session authentication)
+## Application Screenshots
 
-| Method | Path | Purpose |
-|---|---|---|
-| GET | `/api/applications/` | List my applications (paginated) |
-| POST | `/api/applications/` | Add an application |
-| GET | `/api/applications/{id}/` | Get one application |
-| PATCH | `/api/applications/{id}/` | Update fields |
-| DELETE | `/api/applications/{id}/` | Delete application |
-| GET | `/api/applications/?q=python&status=applied` | Search/filter |
-| GET | `/api/applications/stats/` | My status totals |
+Add screenshots of the running application here.
 
-**How to try the API:** Sign in using `/login/` and open `/api/applications/` in the *same browser*. Django REST Framework's browsable API allows you to submit API requests. Session-based write requests require CSRF protection. The API does **not** use public API keys or JWT tokens.
+### Dashboard
 
-Example response for `GET /api/applications/stats/`:
+*Dashboard screenshot*
 
-```json
-{"total": 4, "applied": 2, "interviews": 1, "offers": 1, "rejected": 0}
-```
+### Job Application Management
 
+*Application list screenshot*
 
-## Resume bullet example (only after running and testing)
+### REST API
 
-**JobTrack — Django, PostgreSQL, DRF, Bootstrap** — Built a job-application tracker with authenticated CRUD APIs, user-scoped data access, search/filtering and a status dashboard; wrote automated tests for API permissions and data isolation.
+*Django REST Framework API screenshot*
+
+## Key Technical Concepts
+
+This project demonstrates:
+
+- Django's Model-View-Template (MVT) architecture
+- Relational database integration using PostgreSQL
+- REST API development with Django REST Framework
+- CRUD operations and data validation
+- User authentication and authorization
+- Database querying, searching, and filtering
+- Backend testing and API security
+
+## Future Improvements
+
+- Email notifications for upcoming interviews
+- Interview scheduling and reminders
+- CSV export for application records
+- Additional dashboard analytics
+- Deployment to a cloud hosting platform
